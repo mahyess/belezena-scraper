@@ -39,6 +39,6 @@ class MyFirstGUI:
         
 
 root = Tk()
-root.geometry("500x500")
+root.geometry("300x150")
 my_gui = MyFirstGUI(root)
 root.mainloop()
