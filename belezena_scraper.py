@@ -2,14 +2,24 @@ from bs4 import BeautifulSoup
 import requests
 import csv
 
-url = 'https://www.belezanaweb.com.br/institucional/marcas/'
+url = 'https://belezanaweb.com.br/institucional/marcas/'
 
 s = requests.Session()
 headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
     'Accept-Encoding': 'gzip, deflate, br',
-    'Accept-Language': 'en-US,en;q=0.9',
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4491.0 Safari/537.36'
+    'Accept-Language': 'en-US;en;q=0.5',
+    'Connection': 'keep-alive',
+    'DNT':'1',
+    'Host': 'www.belezanaweb.com.br',
+    'Sec-Fetch-Dest':'document',
+    'Sec-Fetch-Mode':'navigate',
+    'Sec-Fetch-Site':'none',
+    'Sec-Fetch-User':'?1',
+    'Sec-GPC':'1',
+    'TE':'trailers',
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36',
 }
 
 def fetch(url, data=None):
@@ -36,7 +46,7 @@ with open('result.csv', mode='w') as csv_file:
         page = 1
 
         while page:
-            url = f"https://www.belezanaweb.com.br/api/htmls/showcase?uri={category.find('a')['href']}&tab=produtos&size=36&pagina={page}"
+            url = f"https://belezanaweb.com.br/api/htmls/showcase?uri={category.find('a')['href']}&tab=produtos&size=36&pagina={page}"
             category_soup = BeautifulSoup(fetch(url), 'lxml')
 
             items = category_soup.find_all("div", {"class": "showcase-item"})
