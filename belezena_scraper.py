@@ -6,9 +6,6 @@ class Scraper:
     def __init__(self, get_count):
         self.count = get_count
         pass
-
-    # def count(self):
-    #     return self.count
     
     def main(self):
         url = 'https://belezanaweb.com.br/institucional/marcas/'
