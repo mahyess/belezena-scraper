@@ -53,7 +53,7 @@ class Scraper:
         ]
 
     def get_items(self, category):
-        with open(f'results/{category["title"]}.csv', mode="w") as csv_file:
+        with open(f'results/{category["title"]}.csv', mode="wb") as csv_file:
             fieldnames = ["link", "title", "photo", "brand", "price"]
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
