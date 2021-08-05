@@ -77,6 +77,9 @@ class Scraper:
 
                         print(details["title"])
 
+                        details["title"] = details["title"].encode("utf-8")
+                        details['photo'] = details['photo'].replace("w_210", "w_800").replace("h_210", "h_800")
+
                         writer.writerow(details)
                     
                     if len(items):
