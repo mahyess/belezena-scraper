@@ -39,17 +39,12 @@ class Scraper:
 
         categories = soup.find_all("li", {"class": "sub-menu-item"})
 
-        for i, category in enumerate(categories):
-            if category.parent.get("class", None) or len(category.find("a").text.strip())<=1: 
-                # this just starting characters, can be ignored.
-                del categories[i]
-
         return [
             {
                 "title": category.find("a").text.strip(),
                 "url": f"https://belezanaweb.com.br/api/htmls/showcase?uri={category.find('a')['href']}&tab=produtos&size=36",
             }
-            for category in categories
+            for category in categories if len(category.find("a").text.strip()) > 1
         ]
 
     def get_items(self, category):
