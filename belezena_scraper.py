@@ -40,7 +40,7 @@ class Scraper:
         categories = soup.find_all("li", {"class": "sub-menu-item"})
 
         for i, category in enumerate(categories):
-            if category.parent.get("class", None):
+            if category.parent.get("class", None) or len(category.find("a").text.strip())<=1: 
                 # this just starting characters, can be ignored.
                 del categories[i]
 
