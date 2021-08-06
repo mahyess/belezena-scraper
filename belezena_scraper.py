@@ -44,11 +44,12 @@ class Scraper:
                 "title": category.find("a").text.strip(),
                 "url": f"https://belezanaweb.com.br/api/htmls/showcase?uri={category.find('a')['href']}&tab=produtos&size=36",
             }
-            for category in categories if len(category.find("a").text.strip()) > 1
+            for category in categories
+            if len(category.find("a").text.strip()) > 1
         ]
 
     def get_items(self, category):
-        with open(f'results/{category["title"]}.csv', mode="wb") as csv_file:
+        with open(f'results/{category["title"]}.csv', mode="w", newline="") as csv_file:
             fieldnames = ["link", "title", "photo", "brand", "price"]
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
