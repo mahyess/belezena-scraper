@@ -48,60 +48,75 @@ class Scraper:
             if len(category.find("a").text.strip()) > 1
         ]
 
-    def get_items(self, category):
-        with open(f'results/{category["title"]}.csv', mode="w", newline="") as csv_file:
-            fieldnames = ["link", "title", "photo", "brand", "price"]
-            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+    def scrape(self, csv_file, category):
+        fieldnames = ["link", "title", "photo", "brand", "price"]
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
+        if csv_file.tell() == 0:
             writer.writeheader()
-            i = 0
+        # writer.writeheader()
+        i = 0
 
-            page = 1
+        page = 1
 
-            while page:
-                url = f"{category['url']}&pagina={page}"
-                soup = BeautifulSoup(self.fetch(url), "lxml")
+        while page:
+            url = f"{category['url']}&pagina={page}"
+            soup = BeautifulSoup(self.fetch(url), "lxml")
 
-                items = soup.find_all("div", {"class": "showcase-item"})
+            items = soup.find_all("div", {"class": "showcase-item"})
 
-                for item in items:
-                    self.count(i)
-                    i += 1
-                    details = {
-                        "link": "",
-                        "title": "",
-                        "photo": "",
-                        "brand": "",
-                        "price": "",
-                    }
+            for item in items:
+                self.count(i)
+                i += 1
+                details = {
+                    "link": "",
+                    "title": "",
+                    "photo": "",
+                    "brand": "",
+                    "price": "",
+                }
 
-                    details["link"] = item.find("a", {"class": "showcase-item-title"})[
-                        "href"
-                    ]
-                    details["title"] = item.find(
-                        "a", {"class": "showcase-item-title"}
-                    ).text.strip()
-                    details["photo"] = item.find("img")["data-src"]
-                    details["brand"] = item.find(
-                        "span", {"class": "showcase-item-brand"}
-                    ).text.strip()
-                    details["price"] = item.find(
-                        "span", {"class": "price-value"}
-                    ).text.strip()
+                details["link"] = item.find("a", {"class": "showcase-item-title"})[
+                    "href"
+                ]
+                details["title"] = item.find(
+                    "a", {"class": "showcase-item-title"}
+                ).text.strip()
+                details["photo"] = item.find("img")["data-src"]
+                details["brand"] = item.find(
+                    "span", {"class": "showcase-item-brand"}
+                ).text.strip()
+                details["price"] = item.find(
+                    "span", {"class": "price-value"}
+                ).text.strip()
 
-                    print(details["title"])
+                print(details["title"])
 
-                    details["title"] = details["title"].encode("utf-8")
-                    details["photo"] = (
-                        details["photo"]
-                        .replace("w_210", "w_800")
-                        .replace("h_210", "h_800")
-                    )
+                details["title"] = details["title"].encode("utf-8").decode()
+                details["photo"] = (
+                    details["photo"].replace("w_210", "w_800").replace("h_210", "h_800")
+                )
 
-                    writer.writerow(details)
+                writer.writerow(details)
 
-                if len(items):
-                    page += 1
-                    # i += len(items)
-                else:
-                    page = 0
+            if len(items):
+                page += 1
+                # i += len(items)
+            else:
+                page = 0
+
+    def get_items(self, root, category=None):
+        if not root.is_download_all.get() and not category:
+            return
+
+        with open(
+            f'results/{"__all__" if root.is_download_all.get() else category["title"]}.csv',
+            mode="a",
+            newline="",
+        ) as csv_file:
+            if root.is_download_all.get():
+                categories = self.get_categories()
+                for category in categories:
+                    self.scrape(csv_file, category)
+            else:
+                self.scrape(csv_file, category)

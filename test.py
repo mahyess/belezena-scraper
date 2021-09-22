@@ -16,23 +16,12 @@ class Application(Frame):
         self.selected = self.lbox.curselection()[0]
 
     def select(self):
-        selected_category = []
-        if self.is_download_all.get():
-            selected_category = [next(item for item in self.categories)]
-            try:
-                os.remove("results/__all__.csv")
-            except Exception as e:
-                print(e)
-        elif self.lbox.get(first=self.selected):
-            selected_category = [
-                next(
-                    item
-                    for item in self.categories
-                    if item["title"] == self.lbox.get(first=self.selected)
-                ),
-            ]
-
-        for category in selected_category:
+        selected_category = next(
+            item
+            for item in self.categories
+            if item["title"] == self.lbox.get(first=self.selected)
+        )
+        if selected_category:
             self.count_label = Label(self, text="Downloaded data: 0")
             self.count_label.grid(row=4, column=0, padx=10, pady=3)
             self.pb = Progressbar(
@@ -40,7 +29,7 @@ class Application(Frame):
             )
             self.pb.grid(row=5, column=0, padx=10, pady=3)
             self.pb.start()
-            self.scrape.get_items(self, category)
+            self.scrape.get_items(selected_category)
             self.pb.stop()
             self.pb.destroy()
 
@@ -55,13 +44,8 @@ class Application(Frame):
         self.entry.grid(row=0, column=0, padx=10, pady=3)
         self.lbox.grid(row=1, column=0, padx=10, pady=3)
 
-        self.is_download_all = IntVar()
-        Checkbutton(self, text="Download All", variable=self.is_download_all).grid(
-            row=2, column=0, padx=10, pady=3
-        )
-
         self.btn = Button(self, text="Download!!", command=self.select, width=20)
-        self.btn.grid(row=2, column=1, padx=10, pady=3)
+        self.btn.grid(row=2, column=0, padx=10, pady=3)
 
         self.cursel = StringVar()
         self.lb1 = Label(self, textvariable=self.cursel)
@@ -88,11 +72,6 @@ class Application(Frame):
         self.count_label["text"] = f"Downloaded data: {str(count)}"
         self.master.update()
 
-
-import os
-
-if not os.path.exists("results"):
-    os.makedirs("results")
 
 root = Tk()
 root.title("Beleza na bot")
